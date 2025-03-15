@@ -6,9 +6,17 @@ sentiment_pipeline = pipeline("sentiment-analysis")
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
 
-EMAIL_CLASSES = [
-    "Work", "Sports", "Food"
-]
+def load_classes():
+    if os.path.exists(CLASS_FILE):
+        with open(CLASS_FILE, "r") as file:
+            return json.load(file)
+    else:
+        return ["Work", "Sports", "Food"]
+
+
+def save_classes(classes):
+    with open(CLASS_FILE, "w") as file:
+        json.dump(classes, file)
 
 def get_sentiment(text):
     response = sentiment_pipeline(text)
