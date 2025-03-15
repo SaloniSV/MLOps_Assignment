@@ -49,20 +49,22 @@ def classify_with_get():
     classifications = classify_email(text)
     return jsonify({"message": "Email classified", "classifications": classifications}), 200
 
-@app.route("/api/v1/add-class/", methods=['POST'])
+@app.route("/api/v1/add-class", methods=['POST'])
 def add_class():
     if request.is_json:
-        data = request.get_json()
-        new_class = data.get("class")
+        data = request.get_json()  # Get JSON data from the request body
+        new_class = data.get('class')
+
         if new_class:
+            # Load existing classes, add the new class, and save it
             classes = load_classes()
-            if new_class not in classes:
-                classes.append(new_class)
-                save_classes(classes)
-                return jsonify({"message": f"Class '{new_class}' added successfully", "classes": classes}), 200
-            return jsonify({"error": "Class already exists"}), 400
-        return jsonify({"error": "Invalid input"}), 400
-    return jsonify({"error": "Invalid Content-Type"}), 400
+            classes.append(new_class)
+            save_classes(classes)
+            return jsonify({"message": f"Class '{new_class}' added successfully!"}), 200
+        else:
+            return jsonify({"error": "No class provided in request body"}), 400
+    else:
+        return jsonify({"error": "Invalid Content-Type"}), 400
 
 
 
