@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import json
-from analyze import get_sentiment, compute_embeddings, classify_email, load_classes, save_classes, email_classes
+from analyze import get_sentiment, compute_embeddings, classify_email, load_classes, save_classes
 app = Flask(__name__, template_folder='templates')
 
 @app.route("/")
