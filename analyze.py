@@ -5,6 +5,7 @@ import numpy as np
 sentiment_pipeline = pipeline("sentiment-analysis")
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
+CLASS_FILE = "classes.json"
 
 def load_classes():
     if os.path.exists(CLASS_FILE):
