@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify, render_template
-import json
-from analyze import get_sentiment, compute_embeddings, classify_email, load_classes, save_classes
+from analyze import get_sentiment, compute_embeddings, classify_email,load_classes, save_classes
 app = Flask(__name__, template_folder='templates')
 
 @app.route("/")
@@ -49,6 +48,10 @@ def classify_with_get():
     classifications = classify_email(text)
     return jsonify({"message": "Email classified", "classifications": classifications}), 200
 
+
+
+
+
 @app.route("/api/v1/add-class", methods=['POST'])
 def add_class():
     if request.is_json:
@@ -56,11 +59,22 @@ def add_class():
         new_class = data.get('class')
 
         if new_class:
-            # Load existing classes, add the new class, and save it
+            # Load existing classes
             classes = load_classes()
-            classes.append(new_class)
-            save_classes(classes)
-            return jsonify({"message": f"Class '{new_class}' added successfully!"}), 200
+
+            # Check if the class is already in the list
+            if new_class in classes:
+                return jsonify({"message": f"Class '{new_class}' already exists!"}), 400
+            else:
+                # Add the new class and save it
+                classes.append(new_class)
+                save_classes(classes)
+                
+                # Reload the updated classes into EMAIL_CLASSES
+                global EMAIL_CLASSES
+                EMAIL_CLASSES = load_classes()  # Reload classes from the file
+
+                return jsonify({"message": f"Class '{new_class}' added successfully!"}), 200
         else:
             return jsonify({"error": "No class provided in request body"}), 400
     else:
